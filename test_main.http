@@ -1,0 +1,64 @@
+### Root
+
+GET {{base_url}}/
+
+### Get All Users
+
+GET {{base_url}}/user?page=1&per_page=10
+Authorization: Bearer {{user_token}}
+
+### Create User
+
+POST {{base_url}}/user
+Content-Type: application/json
+
+{
+  "username": "johndoe",
+  "email": "johndoe@example.com",
+  "password": "secretpassword"
+}
+
+### Get User
+
+GET {{base_url}}/user/1
+
+### Update User
+
+PUT {{base_url}}/user/1
+Content-Type: application/json
+
+{
+  "username": "janedoe",
+  "email": "janedoe@example.com",
+  "password": "newpassword"
+}
+
+### Delete User
+
+DELETE {{base_url}}/user/1
+
+### Get User's Posts
+
+GET {{base_url}}/user/1/posts?page=1&per_page=10
+
+### Get User Comments
+
+GET {{base_url}}/user/1/comments?page=1&per_page=10
+
+### Login
+
+POST {{base_url}}/login
+Content-Type: application/x-www-form-urlencoded
+
+username=pouya&password=pouya
+
+### Register
+
+POST {{base_url}}/register
+Content-Type: application/json
+
+{
+  "username": "janedoe",
+  "email": "janedoe@example.com",
+  "password": "newpassword"
+}
