@@ -85,7 +85,8 @@ def delete_user(
     if u is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="user not found")
-    if current_user.type != UserType.SUPER_ADMIN and user_id != current_user.id:
+    if current_user.type != UserType.SUPER_ADMIN and user_id != \
+            current_user.id or u["type"] == UserType.SUPER_ADMIN:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="user does not have right permission")
     return user.delete_user(db, user_id)

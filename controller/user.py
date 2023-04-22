@@ -72,7 +72,7 @@ def delete_user(db: Session, user_id: int):
     user = db.query(DbUser).filter(DbUser.id == user_id).first()
     db.delete(user)
     db.commit()
-    return user
+    return user.id
 
 
 def user_exist_with_id(db: Session, user_id: int):

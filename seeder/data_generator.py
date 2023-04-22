@@ -72,10 +72,10 @@ def comment_generate(db: Session = Depends(get_db)):
     posts = post.get_all(db)
 
     for p in posts:
-        count = faker.pyint() % 10 + 1
+        count = faker.pyint() % 50 + 1
         for i in range(count):
             data = CommentCreate(text=faker.paragraph(
-                faker.pyint() % 5 + 5))
+                faker.pyint() % 50 + 5))
             random_user = users[faker.pyint() % len(users)]
             comment.create_comment(db, data, random_user["id"], p["id"])
             print(p["id"])
