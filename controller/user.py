@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 from controller.hashing import Hash
-from model.models import DbUser
+from model.models import DbUser, DbPost, DbComment
 from schema.schemas \
     import UserCreate, \
     convert_user_model, \
@@ -65,12 +65,26 @@ def update_user(db: Session, user_id: int, request: UserUpdate):
         "username": request.username,
         "email": request.email,
     })
+    db.commit()
+    return convert_full_user(db.query(DbUser).get(user_id))
+
+
+def promote_user(db: Session, user_id: int):
+    user_id = db.query(DbUser).filter(DbUser.id == user_id).update(values={
+        "type": UserType.SUPER_ADMIN
+    })
+    db.commit()
     return convert_full_user(db.query(DbUser).get(user_id))
 
 
 def delete_user(db: Session, user_id: int):
     user = db.query(DbUser).filter(DbUser.id == user_id).first()
     db.delete(user)
+    posts = db.query(DbPost).filter(DbPost.user_id == user_id).all()
+    for post in posts:
+        db.query(DbComment).filter(DbComment.post_id == post.id).delete()
+    db.query(DbComment).filter(DbComment.user_id == user_id).delete()
+    db.query(DbPost).filter(DbPost.user_id == user_id).delete()
     db.commit()
     return user.id
 
@@ -84,6 +98,10 @@ def user_exist_with_id(db: Session, user_id: int):
 
 def get_user_with_username(db: Session, username: str):
     return db.query(DbUser).filter(DbUser.username == username).first()
+
+
+def get_user_with_email(db: Session, email: str):
+    return db.query(DbUser).filter(DbUser.email == email).first()
 
 
 def user_exist_with_username(db: Session, username: str):

@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from model.models import DbPost
+from model.models import DbPost, DbComment
 from schema.schemas import PostCreate, convert_post
 from sqlalchemy.orm import Session
 
@@ -64,11 +64,13 @@ def update_post(db: Session, request: PostCreate, post_id: int):
         "title": request.title,
         "image_url": request.image_url,
     })
+    db.commit()
     return convert_post(db.query(DbPost).get(post_id))
 
 
 def delete_post(db: Session, post_id: int):
     post = db.query(DbPost).filter(DbPost.id == post_id).first()
     db.delete(post)
+    db.query(DbComment).filter(DbComment.post_id == post_id).delete()
     db.commit()
     return post_id

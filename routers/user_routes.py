@@ -52,6 +52,22 @@ def get_user(
     return u
 
 
+@router.put('/promote/{user_id}', response_model=User, summary="Promote User")
+def promote_user(
+        user_id: int,
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user)
+):
+    u = user.get_user(db, user_id)
+    if u is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="user not found")
+    if current_user.type != UserType.SUPER_ADMIN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="user does not have right permission")
+    return user.promote_user(db, user_id)
+
+
 @router.put('/{user_id}', response_model=User, summary="Update User")
 def update_user(
         user_id: int,
@@ -66,12 +82,14 @@ def update_user(
     if current_user.type != UserType.SUPER_ADMIN and user_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="user does not have right permission")
-    if user.user_exist_with_email(request.email):
-        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE,
-                            detail="email already exist")
-    if user.user_exist_with_username(request.username):
-        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE,
-                            detail="username already exist")
+    if user.user_exist_with_username(db, request.username):
+        if user.get_user_with_username(db, request.username).id != user_id:
+            raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                                detail="username already exist")
+    if user.user_exist_with_email(db, request.email):
+        if user.get_user_with_email(db, request.email).id != user_id:
+            raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                                detail="email already exist")
     return user.update_user(db, user_id, request)
 
 

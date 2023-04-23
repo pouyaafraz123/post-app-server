@@ -63,7 +63,7 @@ def update_post(
     return post.update_post(db, request, post_id)
 
 
-@router.delete('/{user_id}', response_model=int, summary="Delete Post")
+@router.delete('/{post_id}', response_model=int, summary="Delete Post")
 def delete_post(
         post_id: int,
         db: Session = Depends(get_db),
