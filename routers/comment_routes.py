@@ -73,7 +73,7 @@ def delete_comment(
     if c is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="comment not found")
-    if current_user.type != UserType.SUPER_ADMIN and c.user_id != \
+    if current_user.type != UserType.SUPER_ADMIN and c["user_id"] != \
             current_user.id:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="user does not have right permission")
