@@ -75,7 +75,7 @@ def delete_post(
     if p is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="post not found")
-    if current_user.type != UserType.SUPER_ADMIN and p.user_id != current_user.id:
+    if current_user.type != UserType.SUPER_ADMIN and p["user_id"] != current_user.id:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="user does not have right permission")
     return post.delete_post(db, post_id)
